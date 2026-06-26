@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Kantin Borç</title>
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+<meta name="theme-color" content="#111111">
+</head>
+<body>
+<header>
+<h1>📒 Kantin Borç</h1>
+</header>
+
+<main>
+<section class="total-card">
+<div>Toplam Borç</div>
+<strong id="total">0 ₺</strong>
+<div id="count">0 ürün</div>
+</section>
+
+<input id="search" placeholder="Ürün ara..." autocomplete="off">
+
+<section>
+<h2>Çok Kullanılanlar</h2>
+<div id="favorites" class="products"></div>
+</section>
+
+<section>
+<h2>Ürünler</h2>
+<div id="products" class="products"></div>
+</section>
+
+<section class="cart-box">
+<h2>Sepet</h2>
+<div id="cart"></div>
+<button id="clear">Borcu Çek / Sıfırla</button>
+</section>
+</main>
+
+<script src="products.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
