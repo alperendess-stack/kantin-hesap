@@ -182,7 +182,7 @@ const products = [
   {
     "id": 37,
     "name": "FANTA 250 ML",
-    "price": 25.0
+    "price": 28.0
   },
   {
     "id": 38,
@@ -763,5 +763,65 @@ const products = [
     "id": 153,
     "name": "DANKEK MAGMA ÇİKOLATALI 16*65 GR",
     "price": 15.5
+  },
+  {
+    "id": 154,
+    "name": "COCA COLA 250ML",
+    "price": 28.0
+  },
+  {
+    "id": 155,
+    "name": "COCA COLA 1 LT 12Lİ",
+    "price": 50.0
+  },
+  {
+    "id": 156,
+    "name": "SPRİTE 1 LT 12Lİ",
+    "price": 50.0
+  },
+  {
+    "id": 157,
+    "name": "KUTU CAPPY ŞEFTALİ 330 ML",
+    "price": 36.5
+  },
+  {
+    "id": 158,
+    "name": "KUTU CAPPY KARIŞIK 330 ML",
+    "price": 36.5
+  },
+  {
+    "id": 159,
+    "name": "CAPPY VİŞNELİ 330 ML",
+    "price": 36.5
+  },
+  {
+    "id": 160,
+    "name": "CAPPY ATOM KUTU 330 ML",
+    "price": 36.5
+  },
+  {
+    "id": 161,
+    "name": "FUSE TEA ŞEFTALİ 330 ML",
+    "price": 36.5
+  },
+  {
+    "id": 162,
+    "name": "FUSE TEA LİMON 330ML",
+    "price": 36.5
+  },
+  {
+    "id": 163,
+    "name": "FUSE TEA MANGO 330 ML KUTU",
+    "price": 36.5
+  },
+  {
+    "id": 164,
+    "name": "FUSE TEA KAVUN ÇİLEK 330ML",
+    "price": 36.5
+  },
+  {
+    "id": 165,
+    "name": "FUSE TEA KARPUZ 330 ML",
+    "price": 36.5
   }
 ];
