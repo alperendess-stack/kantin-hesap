@@ -372,7 +372,7 @@ const products = [
   {
     "id": 75,
     "name": "ÖZ KRNFL VERA KARTON BARDAK 50 Lİ",
-    "price": 0.5
+    "price": 0.75
   },
   {
     "id": 76,
