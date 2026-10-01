@@ -29,16 +29,19 @@ body{
   padding-bottom:90px;
 }
 
-body::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  min-height:100%;
+body{
   background:
-    linear-gradient(rgba(5,8,6,.20),rgba(5,8,6,.32)),
-    url("jandarma-bg.png.PNG") center/cover no-repeat;
-  filter:blur(1px);
-  z-index:0;
+    linear-gradient(rgba(5,8,6,.45), rgba(5,8,6,.55)),
+    url("jandarma-bg.png.PNG") center top / cover no-repeat;
+  background-attachment: scroll;
+  background-color:#080b09;
+  position:relative;
+  padding-bottom:90px;
+}
+
+body > *{
+  position:relative;
+  z-index:1;
 }
 }
 
