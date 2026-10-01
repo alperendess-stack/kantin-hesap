@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kantin Admin</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #0f1115;
+      color: #fff;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .card {
+      background: #191d25;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      margin: 7px 0;
+      border: 1px solid #3a3f49;
+      border-radius: 10px;
+      background: #111318;
+      color: white;
+      font-size: 16px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin: 5px 3px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .green {
+      background: #22c55e;
+      color: white;
+    }
+
+    .blue {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .red {
+      background: #ef4444;
+      color: white;
+    }
+
+    .gray {
+      background: #3a3f49;
+      color: white;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .product {
+      background: #111318;
+      border: 1px solid #2d323b;
+      border-radius: 12px;
+      padding: 12px;
+      margin: 10px 0;
+    }
+
+    .product-name {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .status {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 8px;
+      background: #242933;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .topbar h1 {
+      margin: 0;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 12px;
+      }
+
+      .topbar {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- GİRİŞ -->
+  <div id="loginPanel" class="card">
+    <h1>🔐 Kantin Admin</h1>
+
+    <input id="email" type="email" placeholder="Admin e-posta">
+    <input id="password" type="password" placeholder="Şifre">
+
+    <button class="green" onclick="login()">Giriş Yap</button>
+
+    <button class="gray" onclick="forgotPassword()">
+      Şifremi Unuttum
+    </button>
+
+    <div id="loginStatus" class="status"></div>
+  </div>
+
+
+  <!-- ŞİFRE YENİLEME -->
+  <div id="resetPanel" class="card hidden">
+    <h1>🔑 Yeni Şifre</h1>
+
+    <input id="newPassword" type="password" placeholder="Yeni şifre">
+    <input id="newPassword2" type="password" placeholder="Yeni şifre tekrar">
+
+    <button class="green" onclick="updatePassword()">
+      Şifreyi Değiştir
+    </button>
+
+    <div id="resetStatus" class="status"></div>
+  </div>
+
+
+  <!-- ADMIN PANELİ -->
+  <div id="adminPanel" class="hidden">
+
+    <div class="topbar">
+      <h1>🛒 Kantin Admin</h1>
+      <button class="red" onclick="logout()">Çıkış Yap</button>
+    </div>
+
+
+    <!-- ÜRÜN EKLE -->
+    <div class="card">
+      <h2>➕ Yeni Ürün Ekle</h2>
+
+      <input id="newName" type="text" placeholder="Ürün adı">
+      <input id="newPrice" type="number" step="0.01" placeholder="Satış fiyatı">
+
+      <button class="green" onclick="addProduct()">
+        Ürün Ekle
+      </button>
+    </div>
+
+
+    <!-- ÜRÜN ARAMA -->
+    <div class="card">
+      <h2>📦 Ürünler</h2>
+
+      <input
+        id="search"
+        type="text"
+        placeholder="Ürün ara..."
+        oninput="filterProducts()"
+      >
+
+      <div id="products"></div>
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+  const SUPABASE_URL =
+    "https://uazjumzhibhdxzitusdj.supabase.co";
+
+  const SUPABASE_KEY =
+    "sb_publishable_92tyummDQdVlAmakGz7Fq_reYKMDyC";
+
+  const supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+  let products = [];
+
+
+  // =========================
+  // BAŞLANGIÇ
+  // =========================
+
+  async function init() {
+
+    const {
+      data: { session }
+    } = await supabaseClient.auth.getSession();
+
+    if (session) {
+      await checkAdmin();
+    }
+
+    supabaseClient.auth.onAuthStateChange(
+      async (event, session) => {
+
+        if (event === "PASSWORD_RECOVERY") {
+          document
+            .getElementById("loginPanel")
+            .classList.add("hidden");
+
+          document
+            .getElementById("adminPanel")
+            .classList.add("hidden");
+
+          document
+            .getElementById("resetPanel")
+            .classList.remove("hidden");
+        }
+
+        if (event === "SIGNED_IN") {
+          await checkAdmin();
+        }
+
+        if (event === "SIGNED_OUT") {
+          showLogin();
+        }
+      }
+    );
+  }
+
+
+  // =========================
+  // GİRİŞ
+  // =========================
+
+  async function login() {
+
+    const email =
+      document.getElementById("email").value.trim();
+
+    const password =
+      document.getElementById("password").value;
+
+    if (!email || !password) {
+      showLoginStatus("E-posta ve şifre gerekli.");
+      return;
+    }
+
+    showLoginStatus("Giriş yapılıyor...");
+
+    const { error } =
+      await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
+
+    if (error) {
+      showLoginStatus("Giriş başarısız: " + error.message);
+      return;
+    }
+
+    await checkAdmin();
+  }
+
+
+  // =========================
+  // ADMIN KONTROLÜ
+  // =========================
+
+  async function checkAdmin() {
+
+    const {
+      data: { session }
+    } = await supabaseClient.auth.getSession();
+
+    if (!session) {
+      showLogin();
+      return;
+    }
+
+    const { data, error } =
+      await supabaseClient.rpc("is_admin");
+
+    if (error || data !== true) {
+
+      await supabaseClient.auth.signOut();
+
+      showLoginStatus(
+        "Bu hesap admin yetkisine sahip değil."
+      );
+
+      return;
+    }
+
+    document
+      .getElementById("loginPanel")
+      .classList.add("hidden");
+
+    document
+      .getElementById("resetPanel")
+      .classList.add("hidden");
+
+    document
+      .getElementById("adminPanel")
+      .classList.remove("hidden");
+
+    loadProducts();
+  }
+
+
+  // =========================
+  // ŞİFREMİ UNUTTUM
+  // =========================
+
+  async function forgotPassword() {
+
+    const email =
+      document.getElementById("email").value.trim();
+
+    if (!email) {
+      showLoginStatus(
+        "Önce e-posta adresini yaz."
+      );
+      return;
+    }
+
+    const redirectUrl =
+      window.location.origin +
+      window.location.pathname;
+
+    const { error } =
+      await supabaseClient.auth.resetPasswordForEmail(
+        email,
+        {
+          redirectTo: redirectUrl
+        }
+      );
+
+    if (error) {
+      showLoginStatus(
+        "Hata: " + error.message
+      );
+      return;
+    }
+
+    showLoginStatus(
+      "Şifre yenileme bağlantısı e-posta adresine gönderildi."
+    );
+  }
+
+
+  // =========================
+  // YENİ ŞİFRE
+  // =========================
+
+  async function updatePassword() {
+
+    const password =
+      document.getElementById("newPassword").value;
+
+    const password2 =
+      document.getElementById("newPassword2").value;
+
+    if (!password || password.length < 6) {
+      document.getElementById("resetStatus").innerText =
+        "Şifre en az 6 karakter olmalı.";
+      return;
+    }
+
+    if (password !== password2) {
+      document.getElementById("resetStatus").innerText =
+        "Şifreler aynı değil.";
+      return;
+    }
+
+    const { error } =
+      await supabaseClient.auth.updateUser({
+        password
+      });
+
+    if (error) {
+      document.getElementById("resetStatus").innerText =
+        "Hata: " + error.message;
+      return;
+    }
+
+    document.getElementById("resetStatus").innerText =
+      "Şifren başarıyla değiştirildi.";
+
+    setTimeout(() => {
+      checkAdmin();
+    }, 1000);
+  }
+
+
+  // =========================
+  // ÜRÜNLERİ GETİR
+  // =========================
+
+  async function loadProducts() {
+
+    const { data, error } =
+      await supabaseClient
+        .from("products")
+        .select("id,name,price")
+        .order("name");
+
+    if (error) {
+      alert("Ürünler alınamadı: " + error.message);
+      return;
+    }
+
+    products = data || [];
+
+    renderProducts(products);
+  }
+
+
+  // =========================
+  // ÜRÜNLERİ GÖSTER
+  // =========================
+
+  function renderProducts(list) {
+
+    const container =
+      document.getElementById("products");
+
+    container.innerHTML = "";
+
+    if (!list.length) {
+      container.innerHTML =
+        "<p>Ürün bulunamadı.</p>";
+      return;
+    }
+
+    list.forEach(product => {
+
+      const div =
+        document.createElement("div");
+
+      div.className = "product";
+
+      div.innerHTML = `
+        <div class="product-name">
+          ${escapeHtml(product.name)}
+        </div>
+
+        <input
+          id="price-${product.id}"
+          type="number"
+          step="0.01"
+          value="${product.price}"
+        >
+
+        <button
+          class="blue"
+          onclick="updateProduct(${product.id})"
+        >
+          Fiyatı Kaydet
+        </button>
+
+        <button
+          class="red"
+          onclick="deleteProduct(${product.id})"
+        >
+          Ürünü Sil
+        </button>
+      `;
+
+      container.appendChild(div);
+    });
+  }
+
+
+  // =========================
+  // ÜRÜN EKLE
+  // =========================
+
+  async function addProduct() {
+
+    const name =
+      document.getElementById("newName")
+        .value.trim();
+
+    const price =
+      Number(
+        document.getElementById("newPrice")
+          .value
+      );
+
+    if (!name) {
+      alert("Ürün adı gir.");
+      return;
+    }
+
+    if (!Number.isFinite(price) || price < 0) {
+      alert("Geçerli bir fiyat gir.");
+      return;
+    }
+
+    const { error } =
+      await supabaseClient
+        .from("products")
+        .insert({
+          name,
+          price
+        });
+
+    if (error) {
+      alert("Ürün eklenemedi: " + error.message);
+      return;
+    }
+
+    document.getElementById("newName").value = "";
+    document.getElementById("newPrice").value = "";
+
+    await loadProducts();
+
+    alert("Ürün eklendi.");
+  }
+
+
+  // =========================
+  // FİYAT GÜNCELLE
+  // =========================
+
+  async function updateProduct(id) {
+
+    const input =
+      document.getElementById(
+        "price-" + id
+      );
+
+    const price =
+      Number(input.value);
+
+    if (!Number.isFinite(price) || price < 0) {
+      alert("Geçerli bir fiyat gir.");
+      return;
+    }
+
+    const { error } =
+      await supabaseClient
+        .from("products")
+        .update({ price })
+        .eq("id", id);
+
+    if (error) {
+      alert(
+        "Fiyat değiştirilemedi: " +
+        error.message
+      );
+      return;
+    }
+
+    await loadProducts();
+
+    alert("Fiyat güncellendi.");
+  }
+
+
+  // =========================
+  // ÜRÜN SİL
+  // =========================
+
+  async function deleteProduct(id) {
+
+    const product =
+      products.find(p => p.id === id);
+
+    if (!product) return;
+
+    const ok =
+      confirm(
+        '"' +
+        product.name +
+        '" ürününü silmek istediğine emin misin?'
+      );
+
+    if (!ok) return;
+
+    const { error } =
+      await supabaseClient
+        .from("products")
+        .delete()
+        .eq("id", id);
+
+    if (error) {
+      alert(
+        "Ürün silinemedi: " +
+        error.message
+      );
+      return;
+    }
+
+    await loadProducts();
+
+    alert("Ürün silindi.");
+  }
+
+
+  // =========================
+  // ARAMA
+  // =========================
+
+  function filterProducts() {
+
+    const search =
+      document.getElementById("search")
+        .value
+        .toLocaleLowerCase("tr-TR");
+
+    const filtered =
+      products.filter(product =>
+        product.name
+          .toLocaleLowerCase("tr-TR")
+          .includes(search)
+      );
+
+    renderProducts(filtered);
+  }
+
+
+  // =========================
+  // ÇIKIŞ
+  // =========================
+
+  async function logout() {
+
+    await supabaseClient.auth.signOut();
+
+    showLogin();
+  }
+
+
+  function showLogin() {
+
+    document
+      .getElementById("adminPanel")
+      .classList.add("hidden");
+
+    document
+      .getElementById("resetPanel")
+      .classList.add("hidden");
+
+    document
+      .getElementById("loginPanel")
+      .classList.remove("hidden");
+  }
+
+
+  function showLoginStatus(message) {
+
+    document
+      .getElementById("loginStatus")
+      .innerText = message;
+  }
+
+
+  function escapeHtml(text) {
+
+    const div =
+      document.createElement("div");
+
+    div.textContent = text;
+
+    return div.innerHTML;
+  }
+
+
+  init();
+</script>
+
+</body>
+</html>
