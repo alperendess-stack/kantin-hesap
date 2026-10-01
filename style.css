@@ -32,12 +32,13 @@ body{
 body::before{
   content:"";
   position:fixed;
-  inset:-8px;
+  inset:-4px;
   background:
-    linear-gradient(rgba(5,8,6,.35),rgba(5,8,6,.52)),
+    linear-gradient(rgba(5,8,6,.20),rgba(5,8,6,.32)),
     url("jandarma-bg.png.PNG") center/cover no-repeat;
-  filter:blur(3px);
+  filter:blur(1px);
   z-index:0;
+}
 }
 
 body > *{
