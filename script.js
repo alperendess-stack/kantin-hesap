@@ -1,6 +1,6 @@
 const SUPABASE_URL = "https://uazjumzhibhdxzitusdj.supabase.co";
 const SUPABASE_KEY = "sb_publishable_92tyummDQdVlAmakGz7Fqg_reYKMDyC";
-
+let products = [];
 const supabaseClient = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY
