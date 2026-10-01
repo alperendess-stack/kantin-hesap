@@ -1,3 +1,27 @@
+const SUPABASE_URL = "https://uazjumzhibhdxzitusdj.supabase.co";
+const SUPABASE_KEY = "sb_publishable_92tyummDQdVlAmakGz7Fqg_reYKMDyC";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+async function loadProductsFromSupabase() {
+  const { data, error } = await supabaseClient
+    .from("products")
+    .select("id, name, price")
+    .order("name");
+
+  if (error) {
+    console.error("Supabase ürün hatası:", error);
+    return;
+  }
+
+  products.length = 0;
+  products.push(...data);
+
+  render();
+}
 let cart = {};
 const $ = id => document.getElementById(id);
 
@@ -75,3 +99,4 @@ $("clear").onclick=()=>{
 };
 
 render();
+loadProductsFromSupabase();
