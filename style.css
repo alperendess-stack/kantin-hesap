@@ -26,16 +26,17 @@ input{width:100%;padding:18px;border-radius:18px;border:0;font-size:18px;backgro
 body{
   background:#080b09;
   position:relative;
+  padding-bottom:90px;
 }
 
 body::before{
   content:"";
   position:fixed;
-  inset:-12px;
+  inset:-8px;
   background:
-    linear-gradient(rgba(5,8,6,.55),rgba(5,8,6,.72)),
+    linear-gradient(rgba(5,8,6,.35),rgba(5,8,6,.52)),
     url("jandarma-bg.png.PNG") center/cover no-repeat;
-  filter:blur(6px);
+  filter:blur(3px);
   z-index:0;
 }
 
@@ -44,7 +45,7 @@ body > *{
   z-index:1;
 }
 
-/* Ürün kartları net ve hafif şeffaf */
+/* Ürün kartları */
 .product,
 .cart-item,
 .total-card{
@@ -55,6 +56,13 @@ body > *{
 
 /* Başlık */
 header h1{
+  font-size:1.65rem;
   font-weight:800;
+  line-height:1.2;
   text-shadow:0 2px 8px rgba(0,0,0,.8);
+}
+
+/* Alt menünün ürünleri kapatmaması */
+main{
+  padding-bottom:100px;
 }
