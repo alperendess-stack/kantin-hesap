@@ -34,7 +34,7 @@ body::before{
   inset:-12px;
   background:
     linear-gradient(rgba(5,8,6,.55),rgba(5,8,6,.72)),
-    url("jandarma-bg.png") center/cover no-repeat;
+    url("jandarma-bg.png.PNG") center/cover no-repeat;
   filter:blur(6px);
   z-index:0;
 }
