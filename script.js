@@ -31,8 +31,8 @@ function addUsage(product) {
     (usage[product.id] || 0) + 1;
 
   saveUsage();
-  renderFavorites();
 }
+
 
 function renderFavorites() {
 
@@ -185,7 +185,9 @@ function add(p, card) {
   card.classList.add("flash");
 
   showPlus(card);
-
+setTimeout(() => {
+  renderFavorites();
+}, 700);
   toast(
     `✔️ ${p.name} eklendi`
   );
