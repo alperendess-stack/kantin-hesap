@@ -1,6 +1,28 @@
 const SUPABASE_URL = "https://uazjumzhibhdxzitusdj.supabase.co";
 const SUPABASE_KEY = "sb_publishable_92tyummDQdVlAmakGz7Fqg_reYKMDyC";
 let products = [];
+const SUPABASE_KEY = "...";
+
+let products = [];
+
+// Çok Kullanılanlar
+let usage = JSON.parse(localStorage.getItem("kantinUsage") || "{}");
+
+function saveUsage() {
+  localStorage.setItem("kantinUsage", JSON.stringify(usage));
+}
+
+function addUsage(product) {
+  usage[product.id] = (usage[product.id] || 0) + 1;
+  saveUsage();
+  renderFavorites();
+}
+
+function renderFavorites() {
+  // ...
+}
+
+const supabaseClient = ...
 const supabaseClient = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY
@@ -21,6 +43,7 @@ async function loadProductsFromSupabase() {
   products.push(...data);
 
   render();
+  renderFavorites();
 }
 let cart = {};
 const $ = id => document.getElementById(id);
@@ -42,6 +65,7 @@ function render(list=products){
 function add(p,card){
  if(!cart[p.id]) cart[p.id]={...p,qty:0};
  cart[p.id].qty++;
+addUsage(p);
  card.classList.remove("flash");
  void card.offsetWidth;
  card.classList.add("flash");
