@@ -29,14 +29,24 @@ body{
   padding-bottom:90px;
 }
 
+html{
+  background:#080b09;
+}
+
 body{
   background:
     linear-gradient(rgba(5,8,6,.45), rgba(5,8,6,.55)),
-    url("jandarma-bg.png.PNG") center top / cover no-repeat;
-  background-attachment: scroll;
+    url("jandarma-bg.png.PNG");
+
+  background-position:center top;
+  background-size:100% auto;
+  background-repeat:no-repeat;
+  background-attachment:scroll;
+
   background-color:#080b09;
   position:relative;
   padding-bottom:90px;
+}
 }
 
 body > *{
