@@ -353,6 +353,37 @@ $("search").oninput = e => {
     e.target.value
       .toLocaleLowerCase("tr");
 
+  const favoritesBox =
+    document.getElementById("favorites");
+
+  const favoritesTitle =
+    favoritesBox?.previousElementSibling;
+
+  if (q.trim() !== "") {
+    if (favoritesBox) {
+      favoritesBox.style.display = "none";
+    }
+
+    if (
+      favoritesTitle &&
+      favoritesTitle.tagName === "H2"
+    ) {
+      favoritesTitle.style.display = "none";
+    }
+
+  } else {
+    if (favoritesBox) {
+      favoritesBox.style.display = "";
+    }
+
+    if (
+      favoritesTitle &&
+      favoritesTitle.tagName === "H2"
+    ) {
+      favoritesTitle.style.display = "";
+    }
+  }
+
   render(
     products.filter(p =>
       p.name
